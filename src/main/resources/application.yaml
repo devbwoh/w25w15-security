@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: w25w15-security
+  mongodb:
+    uri: ${MONGODB_URI}
+jwt:
+  secret: ${JWT_SECRET}
