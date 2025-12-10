@@ -12,8 +12,11 @@ import java.util.*
 @Component
 class JwtUtil {
     companion object {
-        //private const val EXPIRATION_TIME = 60 * 60 * 1000 // 1 시간
-        private const val EXPIRATION_TIME = 20 * 1000 // 20 초
+        //private const val ACCESS_TOKEN_EXPIRATION_TIME = 60 * 60 * 1000 // 1 시간
+        private const val ACCESS_TOKEN_EXPIRATION_TIME = 20 * 1000 // 20 초
+
+        //private val REFRESH_TOKEN_EXPIRATION_TIME = Duration.ofDays(15).toMillis()
+        private const val REFRESH_TOKEN_EXPIRATION_TIME = 40 * 1000 // 40 초
     }
 
     //@Value($$"${jwt.secret}")
@@ -28,11 +31,20 @@ class JwtUtil {
         key = Keys.hmacShaKeyFor(decodedKey)
     }
 
-    fun generateToken(username: String): String {
+    fun generateAccessToken(username: String): String {
         return Jwts.builder()
             .setSubject(username)
             .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + EXPIRATION_TIME))
+            .setExpiration(Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME))
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact()
+    }
+
+    fun generateRefreshToken(username: String): String {
+        return Jwts.builder()
+            .setSubject(username)
+            .setIssuedAt(Date())
+            .setExpiration(Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_TIME))
             .signWith(key, SignatureAlgorithm.HS256)
             .compact()
     }
